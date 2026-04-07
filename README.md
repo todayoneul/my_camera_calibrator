@@ -1,6 +1,23 @@
 # Camera Calibrator
 
-OpenCV를 활용한 카메라 캘리브레이션 도구입니다. 체스보드 패턴을 이용하여 카메라 내부 파라미터를 추정하고, 렌즈 왜곡을 보정
+OpenCV를 활용한 카메라 캘리브레이션 도구입니다. 체스보드 패턴을 이용하여 카메라 내부 파라미터를 추정하고 렌즈 왜곡을 보정합니다.
+
+## 데모 미리보기
+
+GitHub에서 바로 확인할 수 있도록 경량 미리보기(GIF)와 비교 프레임 이미지를 상단에 배치했습니다.
+
+### 왜곡심한버전 비교 프레임
+
+![왜곡심한버전 보정 비교 프레임](output/왜곡심한버전_comparison_frame.jpg)
+
+### 왜곡심한버전 비교 미리보기 (GIF)
+
+![왜곡심한버전 보정 비교 GIF](output/왜곡심한버전_preview.gif)
+
+원본 영상이 필요한 경우 로컬에서 확인:
+
+- 보정 영상(H.264): `output/왜곡심한버전_undistorted_h264.mp4`
+- 비교 영상(H.264, 좌: 원본, 우: 보정): `output/왜곡심한버전_comparison_h264.mp4`
 
 ## 주요 기능
 
@@ -44,6 +61,11 @@ python distortion_correction.py calibration_result.json -i 왜곡심한버전.mo
 
 # 실시간 미리보기
 python distortion_correction.py calibration_result.json --live
+
+# GitHub용 경량 GIF 미리보기 생성 (비교 영상 기준, 6초)
+ffmpeg -y -ss 00:00:02 -t 6 -i output/왜곡심한버전_comparison_h264.mp4 \
+	-vf "fps=10,scale=900:-1:flags=lanczos,split[s0][s1];[s0]palettegen=max_colors=128[p];[s1][p]paletteuse=dither=bayer" \
+	output/왜곡심한버전_preview.gif
 ```
 
 #### 전체 파이프라인 실행
@@ -81,35 +103,6 @@ python run_all.py
 - **사용된 이미지 수**: 46
 - **이미지 크기**: 1620 x 1080
 - **모델**: standard
-
----
-
-## 렌즈 왜곡 보정 데모
-
-### 왜곡심한버전 결과물
-
-- 비교 프레임 이미지: `output/왜곡심한버전_comparison_frame.jpg`
-- 보정 영상(H.264): `output/왜곡심한버전_undistorted_h264.mp4`
-- 비교 영상(H.264, 좌: 원본, 우: 보정): `output/왜곡심한버전_comparison_h264.mp4`
-
-![왜곡심한버전 보정 비교](output/왜곡심한버전_comparison_frame.jpg)
-
-동영상 데모:
-
-- [보정 영상 보기](output/왜곡심한버전_undistorted_h264.mp4)
-- [비교 영상 보기](output/왜곡심한버전_comparison_h264.mp4)
-
-보정 영상 미리보기:
-
-<video src="output/왜곡심한버전_undistorted_h264.mp4" controls width="900" preload="metadata">
-	브라우저가 video 태그를 지원하지 않습니다.
-</video>
-
-비교 영상 미리보기:
-
-<video src="output/왜곡심한버전_comparison_h264.mp4" controls width="900" preload="metadata">
-	브라우저가 video 태그를 지원하지 않습니다.
-</video>
 
 ---
 
@@ -159,7 +152,8 @@ my_camera_calibrator/
 ├── output/                 # 보정된 이미지/동영상 (자동 생성)
 │   ├── *_undistorted.mp4
 │   ├── *_comparison.mp4
-│   └── *_comparison_frame.jpg
+│   ├── *_comparison_frame.jpg
+│   └── *_preview.gif
 └── README.md
 ```
 
