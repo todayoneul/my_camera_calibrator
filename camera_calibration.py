@@ -241,7 +241,9 @@ def calibrate_camera(obj_points, img_points, img_size, use_fisheye=False):
         "image_size": list(img_size),
         "num_images_used": len(obj_points),
         "calibration_date": datetime.now().isoformat(),
-        "model": "fisheye" if use_fisheye else "standard"
+        "model": "fisheye" if use_fisheye else "standard",
+        "rvecs": [r.flatten().tolist() for r in rvecs],
+        "tvecs": [t.flatten().tolist() for t in tvecs]
     }
     
     return result
