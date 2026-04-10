@@ -1,8 +1,3 @@
-"""
-Lens Distortion Correction
-This script applies lens distortion correction using calibration results.
-"""
-
 import cv2
 import numpy as np
 import json
@@ -11,10 +6,6 @@ import argparse
 
 
 def create_compatible_video_writer(path, fps, frame_size):
-    """
-    Create a VideoWriter with browser-friendly codec when possible.
-    Tries H.264-compatible tags first, then falls back to mp4v.
-    """
     codecs = ['avc1', 'H264', 'mp4v']
     for codec in codecs:
         fourcc = cv2.VideoWriter_fourcc(*codec)
@@ -28,9 +19,6 @@ def create_compatible_video_writer(path, fps, frame_size):
 
 
 def load_calibration(calibration_path):
-    """
-    Load calibration result from JSON file.
-    """
     with open(calibration_path, 'r') as f:
         result = json.load(f)
     
@@ -42,21 +30,6 @@ def load_calibration(calibration_path):
 
 
 def undistort_image(image, camera_matrix, dist_coeffs, alpha=1.0, model='standard'):
-    """
-    Apply lens distortion correction to an image.
-    
-    Args:
-        image: Input image
-        camera_matrix: Camera intrinsic matrix
-        dist_coeffs: Distortion coefficients
-        alpha: Free scaling parameter (0-1)
-                0 = crop all black pixels
-                1 = keep all pixels (may have black borders)
-        model: 'standard' or 'fisheye'
-    
-    Returns:
-        Undistorted image and new camera matrix
-    """
     h, w = image.shape[:2]
     
     if model == 'fisheye':
@@ -85,9 +58,6 @@ def undistort_image(image, camera_matrix, dist_coeffs, alpha=1.0, model='standar
 
 
 def undistort_image_with_map(image, camera_matrix, dist_coeffs, alpha=1.0, map1=None, map2=None, model='standard'):
-    """
-    Apply lens distortion correction using precomputed maps (faster for video).
-    """
     h, w = image.shape[:2]
     
     if map1 is None or map2 is None:
@@ -112,9 +82,6 @@ def undistort_image_with_map(image, camera_matrix, dist_coeffs, alpha=1.0, map1=
 
 
 def create_comparison_image(original, undistorted, direction='horizontal'):
-    """
-    Create a side-by-side or top-bottom comparison image.
-    """
     # Resize if dimensions don't match
     if original.shape != undistorted.shape:
         undistorted = cv2.resize(undistorted, (original.shape[1], original.shape[0]))
@@ -139,12 +106,6 @@ def create_comparison_image(original, undistorted, direction='horizontal'):
 
 
 def process_image(input_path, output_folder, camera_matrix, dist_coeffs, alpha=0.6, model='standard', crop_roi=True):
-    """
-    Process a single image and save results.
-    
-    Args:
-        crop_roi: If True, automatically crop black borders
-    """
     img = cv2.imread(input_path)
     if img is None:
         print(f"Error: Could not read image: {input_path}")
@@ -195,16 +156,6 @@ def process_image(input_path, output_folder, camera_matrix, dist_coeffs, alpha=0
 
 
 def process_video(input_path, output_folder, camera_matrix, dist_coeffs, alpha=0.6, save_comparison=True, model='standard', crop_roi=True):
-    """
-    Process a video and save undistorted version.
-    
-    Args:
-        alpha: Free scaling parameter (0-1)
-               0 = crop all black pixels
-               0.6 = good balance (default)
-               1 = keep all pixels
-        crop_roi: If True, automatically crop black borders
-    """
     cap = cv2.VideoCapture(input_path)
     if not cap.isOpened():
         print(f"Error: Could not open video: {input_path}")
@@ -315,9 +266,6 @@ def process_video(input_path, output_folder, camera_matrix, dist_coeffs, alpha=0
 
 
 def live_preview(camera_matrix, dist_coeffs, camera_id=0, alpha=0.6, model='standard'):
-    """
-    Show live preview of distortion correction from webcam.
-    """
     cap = cv2.VideoCapture(camera_id)
     if not cap.isOpened():
         print(f"Error: Could not open camera {camera_id}")
