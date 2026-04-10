@@ -1,9 +1,3 @@
-"""
-Camera Calibration using Chessboard Pattern
-This script performs camera calibration by detecting chessboard corners
-in video frames and computing camera intrinsic parameters.
-"""
-
 import cv2
 import numpy as np
 import glob
@@ -20,10 +14,6 @@ CRITERIA = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
 
 
 def prepare_object_points(board_size, square_size):
-    """
-    Prepare 3D object points for the chessboard pattern.
-    The chessboard is assumed to be on the Z=0 plane.
-    """
     objp = np.zeros((board_size[0] * board_size[1], 3), np.float32)
     objp[:, :2] = np.mgrid[0:board_size[0], 0:board_size[1]].T.reshape(-1, 2)
     objp *= square_size
@@ -31,10 +21,6 @@ def prepare_object_points(board_size, square_size):
 
 
 def extract_frames_from_video(video_path, frame_interval=30):
-    """
-    Extract frames from video at specified intervals.
-    Returns list of frames where chessboard was successfully detected.
-    """
     cap = cv2.VideoCapture(video_path)
     if not cap.isOpened():
         print(f"Error: Could not open video file: {video_path}")
@@ -84,9 +70,6 @@ def extract_frames_from_video(video_path, frame_interval=30):
 
 
 def extract_frames_from_images(image_folder, pattern="*.jpg"):
-    """
-    Extract chessboard corners from images in a folder.
-    """
     objp = prepare_object_points(CHESSBOARD_SIZE, SQUARE_SIZE)
     obj_points = []
     img_points = []
@@ -129,12 +112,6 @@ def extract_frames_from_images(image_folder, pattern="*.jpg"):
 
 
 def calibrate_camera(obj_points, img_points, img_size, use_fisheye=False):
-    """
-    Perform camera calibration and return camera matrix and distortion coefficients.
-    
-    Args:
-        use_fisheye: If True, use fisheye calibration model for wide-angle lenses
-    """
     if len(obj_points) < 3:
         print("Error: Need at least 3 valid chessboard images for calibration")
         return None
@@ -259,9 +236,6 @@ def save_calibration_result(result, output_path="calibration_result.json"):
 
 
 def print_calibration_result(result):
-    """
-    Print calibration results in a formatted way.
-    """
     print("\n" + "="*60)
     print("CAMERA CALIBRATION RESULTS")
     print("="*60)
